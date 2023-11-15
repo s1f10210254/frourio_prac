@@ -19,7 +19,7 @@ export const registerWithEmail = async (email: string, password: string) => {
   try {
     const auth = createAuth();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    console.log('userCredential', userCredential);
+    console.log('userCredential', userCredential.user);
   } catch (error) {
     console.error(error);
   }
