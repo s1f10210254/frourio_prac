@@ -4,6 +4,7 @@ import { returnNull } from './returnNull';
 
 export const loginWithGitHub = async () => {
   const ghProvider = new GithubAuthProvider();
+  console.log('ghProvider', ghProvider);
   ghProvider.addScope('read:user');
 
   await signInWithPopup(createAuth(), ghProvider).catch(returnNull);
