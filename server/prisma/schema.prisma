@@ -14,3 +14,21 @@ model Task {
   done      Boolean
   createdAt DateTime
 }
+
+model User {
+  id        String @id
+  latitude  Float
+  longitude Float
+  posts     Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  postTime  DateTime @default(now())
+  content   String
+  latitude  Float
+  longitude Float
+  likes     Int      @default(0)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
