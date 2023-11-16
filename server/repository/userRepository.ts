@@ -1,18 +1,19 @@
 import { prismaClient } from '$/service/prismaClient';
 
-export const getUser = async (userId: string) => {
-  console.log(userId);
+export const getUser = async (user: string) => {
+  console.log(user);
   return await prismaClient.user.findMany({
-    where: { id: userId },
+    where: { id: user },
   });
 };
 
-// const postUser = async (userId: string) => {
-//   const prismaUser = await prismaClient.user.create({
-//     data: {
-//       id: userId,
-//       latitude: 1.1,
-//       longitude: 1.2,
-//     },
-//   });
-// };
+export const getPost = async (user: string) => {
+  const post = await prismaClient.post.findMany({
+    where: { userId: user },
+  });
+
+  return post.map((post) => ({
+    ...post,
+    postTime: post.postTime.toISOString(),
+  }));
+};
