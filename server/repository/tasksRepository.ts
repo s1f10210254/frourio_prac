@@ -14,6 +14,8 @@ const toModel = (prismaTask: Task): TaskModel => ({
 });
 
 export const getTasks = async (userId: UserId, limit?: number): Promise<TaskModel[]> => {
+  console.log('userID', userId);
+  console.log('limit', limit);
   const prismaTasks = await prismaClient.task.findMany({
     where: { userId },
     take: limit,
