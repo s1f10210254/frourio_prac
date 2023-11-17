@@ -49,21 +49,24 @@ const Home = () => {
   }, [user]);
 
   const [userID] = useAtom(userIDAtom);
+
+  //DBのuserIDをいれる
   const getUserID = async () => {
     if (userID === null) return;
     // console.log('postUserID', userID);
     const data = await apiClient.user.$get({ query: { userId: userID } }).catch(returnNull);
     console.log('User見る', data);
-    // const id = data?.map((key) => key.id);
-    // console.log('id', id);
-    // const latitudes = data?.map((key) => key.latitude);
-    // console.log('latitudes', latitudes);
   };
 
   const postUserID = async () => {
     if (userID === null) return;
     await apiClient.user.$post({ body: { userId: userID } });
+    console.log('postUserID');
   };
+
+  // useEffect(() => {
+  //   postUserID();
+  // }, [postUserID]);
 
   const [postData, setPostData] = useState<
     | {
@@ -86,17 +89,18 @@ const Home = () => {
 
   const postPostContent = useCallback(async () => {
     if (userID === null) return;
-    const content = 'a';
-    const latitude = 2.1;
-    const longitude = 2.2;
+    // substring(2, 7) はその文字列の一部を切り取ります（最大5文字）
+    const content = Math.random().toString(36).substring(2, 7);
+    const latitude = Math.random() * 180 - 90;
+    const longitude = Math.random() * 360 - 180;
     console.log('postpost');
     await apiClient.post.$post({ body: { content, latitude, longitude, userId: userID } });
-    console.log('aaa');
+    console.log('postpostContent');
   }, [userID]);
 
   useEffect(() => {
     getPostContent();
-  }, [getPostContent, postPostContent]);
+  }, [getPostContent]);
 
   // if (!tasks || !user) return <Loading visible />;
   if (!tasks || !user) {
@@ -112,6 +116,7 @@ const Home = () => {
         <button onClick={getUserID}>getUser</button>
         <button onClick={postUserID}>postUserID</button>
         <button onClick={postPostContent}>postPost</button>
+        <button onClick={getPostContent}>getPostContent</button>
         {/* <button onClick={getPostContent}>getPost</button> */}
         <p>補足:DBからpostの内容をgetするにはuseEffect使用</p>
         <br />
