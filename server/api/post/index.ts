@@ -22,4 +22,8 @@ export type Methods = DefineMethods<{
       userId: string;
     };
   };
+
+  delete: {
+    query: { postId: string };
+  };
 }>;
