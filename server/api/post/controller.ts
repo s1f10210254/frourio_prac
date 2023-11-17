@@ -1,4 +1,4 @@
-import { getPost, postPost } from '$/repository/userRepository';
+import { deletePost, getPost, postPost } from '$/repository/userRepository';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
@@ -10,4 +10,9 @@ export default defineController(() => ({
     status: 201,
     body: await postPost(body.content, body.latitude, body.longitude, body.userId),
   }),
+  delete: async ({ query }) => {
+    const postId = query.postId;
+    await deletePost(postId);
+    return { status: 204 };
+  },
 }));

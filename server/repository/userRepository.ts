@@ -50,3 +50,9 @@ export const postPost = async (
   console.log('postpostpost', post);
   return post;
 };
+
+export const deletePost = async (postId: string) => {
+  await prismaClient.post.delete({
+    where: { id: postId },
+  });
+};

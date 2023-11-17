@@ -1,46 +1,44 @@
 import type { TaskModel } from 'commonTypesWithClient/models';
 import { useAtom } from 'jotai';
-import type { ChangeEvent, FormEvent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { returnNull } from 'src/utils/returnNull';
 import { userAtom, userIDAtom } from '../atoms/user';
-import styles from './index.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
   // console.log('user', user);
   const [tasks, setTasks] = useState<TaskModel[]>();
-  const [label, setLabel] = useState('');
-  const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
-    setLabel(e.target.value);
-  };
+  // const [label, setLabel] = useState('');
+  // const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setLabel(e.target.value);
+  // };
   const fetchTasks = async () => {
     const tasks = await apiClient.tasks.$get().catch(returnNull);
 
     if (tasks !== null) setTasks(tasks);
   };
   // console.log('tasks', tasks);
-  const createTask = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!label) return;
+  // const createTask = async (e: FormEvent) => {
+  //   e.preventDefault();
+  //   if (!label) return;
 
-    await apiClient.tasks.post({ body: { label } }).catch(returnNull);
-    setLabel('');
-    await fetchTasks();
-  };
-  const toggleDone = async (task: TaskModel) => {
-    await apiClient.tasks
-      ._taskId(task.id)
-      .patch({ body: { done: !task.done } })
-      .catch(returnNull);
-    await fetchTasks();
-  };
-  const deleteTask = async (task: TaskModel) => {
-    await apiClient.tasks._taskId(task.id).delete().catch(returnNull);
-    await fetchTasks();
-  };
+  //   await apiClient.tasks.post({ body: { label } }).catch(returnNull);
+  //   setLabel('');
+  //   await fetchTasks();
+  // };
+  // const toggleDone = async (task: TaskModel) => {
+  //   await apiClient.tasks
+  //     ._taskId(task.id)
+  //     .patch({ body: { done: !task.done } })
+  //     .catch(returnNull);
+  //   await fetchTasks();
+  // };
+  // const deleteTask = async (task: TaskModel) => {
+  //   await apiClient.tasks._taskId(task.id).delete().catch(returnNull);
+  //   await fetchTasks();
+  // };
 
   useEffect(() => {
     if (!user) return;
@@ -64,10 +62,6 @@ const Home = () => {
     console.log('postUserID');
   };
 
-  // useEffect(() => {
-  //   postUserID();
-  // }, [postUserID]);
-
   const [postData, setPostData] = useState<
     | {
         id: string;
@@ -87,7 +81,7 @@ const Home = () => {
     setPostData(data);
   }, [userID]);
 
-  const postPostContent = useCallback(async () => {
+  const postPostContent = async () => {
     if (userID === null) return;
     // substring(2, 7) はその文字列の一部を切り取ります（最大5文字）
     const content = Math.random().toString(36).substring(2, 7);
@@ -96,11 +90,13 @@ const Home = () => {
     console.log('postpost');
     await apiClient.post.$post({ body: { content, latitude, longitude, userId: userID } });
     console.log('postpostContent');
-  }, [userID]);
+    await getPostContent();
+  };
 
-  useEffect(() => {
-    getPostContent();
-  }, [getPostContent]);
+  const deletePostContent = async (postId: string) => {
+    await apiClient.post.$delete({ query: { postId } }).catch(returnNull);
+    await getPostContent();
+  };
 
   // if (!tasks || !user) return <Loading visible />;
   if (!tasks || !user) {
@@ -113,6 +109,7 @@ const Home = () => {
       <BasicHeader user={user} />
       <div>
         <p>ユーザーID:{userID}</p>
+
         <button onClick={getUserID}>getUser</button>
         <button onClick={postUserID}>postUserID</button>
         <button onClick={postPostContent}>postPost</button>
@@ -123,6 +120,8 @@ const Home = () => {
         {postData &&
           postData.map((post) => (
             <div key={post.id}>
+              <button onClick={() => deletePostContent(post.id)}>Delete Post</button>
+              <p>id: {post.id}</p>
               <p>Content: {post.content}</p>
               <p>Time: {post.postTime}</p>
               <p>latitude: {post.latitude}</p>
@@ -132,7 +131,7 @@ const Home = () => {
           ))}
       </div>
 
-      <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={createTask}>
+      {/* <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={createTask}>
         <input value={label} type="text" onChange={inputLabel} />
         <input type="submit" value="ADD" />
       </form>
@@ -151,7 +150,7 @@ const Home = () => {
             />
           </li>
         ))}
-      </ul>
+      </ul> */}
     </>
   );
 };
