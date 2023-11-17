@@ -1,15 +1,16 @@
 import type { TaskModel } from 'commonTypesWithClient/models';
 import { useAtom } from 'jotai';
 import type { ChangeEvent, FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { returnNull } from 'src/utils/returnNull';
-import { userAtom } from '../atoms/user';
+import { userAtom, userIDAtom } from '../atoms/user';
 import styles from './index.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
+  // console.log('user', user);
   const [tasks, setTasks] = useState<TaskModel[]>();
   const [label, setLabel] = useState('');
   const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +21,7 @@ const Home = () => {
 
     if (tasks !== null) setTasks(tasks);
   };
+  // console.log('tasks', tasks);
   const createTask = async (e: FormEvent) => {
     e.preventDefault();
     if (!label) return;
@@ -46,7 +48,55 @@ const Home = () => {
     fetchTasks();
   }, [user]);
 
-  console.log(user);
+  const [userID] = useAtom(userIDAtom);
+  const getUserID = async () => {
+    if (userID === null) return;
+    // console.log('postUserID', userID);
+    const data = await apiClient.user.$get({ query: { userId: userID } }).catch(returnNull);
+    console.log('User見る', data);
+    // const id = data?.map((key) => key.id);
+    // console.log('id', id);
+    // const latitudes = data?.map((key) => key.latitude);
+    // console.log('latitudes', latitudes);
+  };
+
+  const postUserID = async () => {
+    if (userID === null) return;
+    await apiClient.user.$post({ body: { userId: userID } });
+  };
+
+  const [postData, setPostData] = useState<
+    | {
+        id: number;
+        postTime: string;
+        content: string;
+        latitude: number;
+        longitude: number;
+        likes: number;
+        userId: string;
+      }[]
+    | null
+  >(null);
+
+  const getPostContent = useCallback(async () => {
+    if (userID === null) return;
+    const data = await apiClient.post.$get({ query: { userId: userID } }).catch(returnNull);
+    setPostData(data);
+  }, [userID]);
+
+  const postPostContent = useCallback(async () => {
+    if (userID === null) return;
+    const content = 'a';
+    const latitude = 2.1;
+    const longitude = 2.2;
+    console.log('postpost');
+    await apiClient.post.$post({ body: { content, latitude, longitude, userId: userID } });
+    console.log('aaa');
+  }, [userID]);
+
+  useEffect(() => {
+    getPostContent();
+  }, [getPostContent, postPostContent]);
 
   // if (!tasks || !user) return <Loading visible />;
   if (!tasks || !user) {
@@ -57,6 +107,25 @@ const Home = () => {
   return (
     <>
       <BasicHeader user={user} />
+      <div>
+        <p>ユーザーID:{userID}</p>
+        <button onClick={getUserID}>getUser</button>
+        <button onClick={postUserID}>postUserID</button>
+        <button onClick={postPostContent}>postPost</button>
+        {/* <button onClick={getPostContent}>getPost</button> */}
+        <p>補足:DBからpostの内容をgetするにはuseEffect使用</p>
+        <br />
+        {postData &&
+          postData.map((post) => (
+            <div key={post.id}>
+              <p>Content: {post.content}</p>
+              <p>Time: {post.postTime}</p>
+              <p>latitude: {post.latitude}</p>
+              <p>longitude: {post.longitude}</p>
+              <br />
+            </div>
+          ))}
+      </div>
 
       <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={createTask}>
         <input value={label} type="text" onChange={inputLabel} />

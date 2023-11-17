@@ -12,7 +12,9 @@ export const loginWithGitHub = async () => {
   console.log('ghProvider', ghProvider);
   ghProvider.addScope('read:user');
 
-  await signInWithPopup(createAuth(), ghProvider).catch(returnNull);
+  const loginData = await signInWithPopup(createAuth(), ghProvider).catch(returnNull);
+
+  return loginData?.user.uid;
 };
 
 export const registerWithEmail = async (email: string, password: string) => {
