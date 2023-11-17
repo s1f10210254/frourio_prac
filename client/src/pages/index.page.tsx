@@ -70,7 +70,7 @@ const Home = () => {
 
   const [postData, setPostData] = useState<
     | {
-        id: number;
+        id: string;
         postTime: string;
         content: string;
         latitude: number;

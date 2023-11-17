@@ -4,7 +4,7 @@ export type Methods = DefineMethods<{
   get: {
     query: { userId: string };
     resBody: {
-      id: number;
+      id: string;
       postTime: string;
       content: string;
       latitude: number;

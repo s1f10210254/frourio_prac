@@ -1,4 +1,5 @@
 import { prismaClient } from '$/service/prismaClient';
+import { randomUUID } from 'crypto';
 
 export const getUser = async (user: string) => {
   console.log(user);
@@ -39,6 +40,7 @@ export const postPost = async (
   console.log('postpostpost');
   const post = await prismaClient.post.create({
     data: {
+      id: randomUUID(),
       content: postcontent,
       latitude: postlatitude,
       longitude: postlongitude,
