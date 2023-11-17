@@ -7,6 +7,18 @@ export const getUser = async (user: string) => {
   });
 };
 
+export const postUser = async (userId: string) => {
+  console.log(userId);
+  const user = await prismaClient.user.create({
+    data: {
+      id: userId,
+      latitude: 1,
+      longitude: 2,
+    },
+  });
+  return user;
+};
+
 export const getPost = async (user: string) => {
   const post = await prismaClient.post.findMany({
     where: { userId: user },

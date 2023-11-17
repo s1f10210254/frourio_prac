@@ -5,4 +5,9 @@ export type Methods = DefineMethods<{
     query: { userId: string };
     resBody: { id: string; latitude: number; longitude: number }[];
   };
+  post: {
+    reqBody: {
+      userId: string;
+    };
+  };
 }>;

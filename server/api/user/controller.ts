@@ -1,4 +1,4 @@
-import { getUser } from '$/repository/userRepository';
+import { getUser, postUser } from '$/repository/userRepository';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
@@ -8,4 +8,8 @@ export default defineController(() => ({
     const userId = query.userId;
     return { status: 200, body: await getUser(userId) };
   },
+  post: async ({ body }) => ({
+    status: 201,
+    body: await postUser(body.userId),
+  }),
 }));

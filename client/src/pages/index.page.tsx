@@ -51,13 +51,18 @@ const Home = () => {
   const [userID] = useAtom(userIDAtom);
   const getUserID = async () => {
     if (userID === null) return;
-    console.log('postUserID', userID);
+    // console.log('postUserID', userID);
     const data = await apiClient.user.$get({ query: { userId: userID } }).catch(returnNull);
     console.log('User見る', data);
-    const id = data?.map((key) => key.id);
-    console.log('id', id);
-    const latitudes = data?.map((key) => key.latitude);
-    console.log('latitudes', latitudes);
+    // const id = data?.map((key) => key.id);
+    // console.log('id', id);
+    // const latitudes = data?.map((key) => key.latitude);
+    // console.log('latitudes', latitudes);
+  };
+
+  const postUserID = async () => {
+    if (userID === null) return;
+    await apiClient.user.$post({ body: { userId: userID } });
   };
 
   const [postData, setPostData] = useState<
@@ -105,15 +110,21 @@ const Home = () => {
       <div>
         <p>ユーザーID:{userID}</p>
         <button onClick={getUserID}>getUser</button>
+        <button onClick={postUserID}>postUserID</button>
+        <button onClick={postPostContent}>postPost</button>
         {/* <button onClick={getPostContent}>getPost</button> */}
+        <p>補足:DBからpostの内容をgetするにはuseEffect使用</p>
+        <br />
         {postData &&
           postData.map((post) => (
             <div key={post.id}>
               <p>Content: {post.content}</p>
-              <p>Time:{post.postTime}</p>
+              <p>Time: {post.postTime}</p>
+              <p>latitude: {post.latitude}</p>
+              <p>longitude: {post.longitude}</p>
+              <br />
             </div>
           ))}
-        <button onClick={postPostContent}>postPost</button>
       </div>
 
       <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={createTask}>
