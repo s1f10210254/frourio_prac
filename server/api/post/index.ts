@@ -13,4 +13,13 @@ export type Methods = DefineMethods<{
       userId: string;
     }[];
   };
+
+  post: {
+    reqBody: {
+      content: string;
+      latitude: number;
+      longitude: number;
+      userId: string;
+    };
+  };
 }>;

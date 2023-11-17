@@ -17,3 +17,22 @@ export const getPost = async (user: string) => {
     postTime: post.postTime.toISOString(),
   }));
 };
+
+export const postPost = async (
+  postcontent: string,
+  postlatitude: number,
+  postlongitude: number,
+  userId: string
+) => {
+  console.log('postpostpost');
+  const post = await prismaClient.post.create({
+    data: {
+      content: postcontent,
+      latitude: postlatitude,
+      longitude: postlongitude,
+      userId,
+    },
+  });
+  console.log('postpostpost', post);
+  return post;
+};

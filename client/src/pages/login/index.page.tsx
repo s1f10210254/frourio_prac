@@ -1,4 +1,6 @@
 import { APP_TITLE } from 'commonConstantsWithClient';
+import { useAtom } from 'jotai';
+import { userIDAtom } from 'src/atoms/user';
 import { GithubIcon } from 'src/components/icons/GithubIcon';
 import { staticPath } from 'src/utils/$path';
 import { loginWithGitHub } from 'src/utils/login';
@@ -7,9 +9,13 @@ import styles from './index.module.css';
 
 const Login = () => {
   const { loadingElm, addLoading, removeLoading } = useLoading();
+  const [, setUserID] = useAtom(userIDAtom);
   const login = async () => {
     addLoading();
-    await loginWithGitHub();
+    const data = await loginWithGitHub();
+    console.log('loginData', data);
+    if (data !== undefined) setUserID(data);
+
     removeLoading();
   };
 

@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { registerWithEmail } from 'src/utils/login';
 
@@ -17,6 +17,14 @@ const RegistrationForm: React.FC = () => {
     });
     return unsubscribe;
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(getAuth());
+    } catch (error) {
+      console.error('ログアウトに失敗しました', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,6 +48,7 @@ const RegistrationForm: React.FC = () => {
       {user ? (
         <div>
           <p>ログイン中:{user.email}</p>
+          <button onClick={handleLogout}>ログアウト</button>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
