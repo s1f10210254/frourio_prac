@@ -23,7 +23,7 @@ model User {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        String   @id
   postTime  DateTime @default(now())
   content   String
   latitude  Float
